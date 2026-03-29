@@ -34,39 +34,44 @@ jobs:
         export LANG="en_US.UTF-8"
         export LC_ALL="en_US.UTF-8"
 
-    - name: Get variables
+    - name: Get variables 1
+      shell: bash
       run: |
         sed -i 's|\r$||g' variables
-        grep -hE '^\s*PADAVAN_[A-Z0-9_]+=' variables >> "$GITHUB_ENV"
-                PADAVAN_THEMES="${PADAVAN_THEMES[*]}"
-        for v in "${!PADAVAN_@}"; do
-          echo "$v=${!v}" >> "$GITHUB_ENV"
-        done
-        
-    - name: Download sources and toolchain
-      run: |
-        git config --global --add safe.directory '*'
-        git clone -b "${{ env.PADAVAN_BRANCH }}" "${{ env.PADAVAN_REPO }}" padavan-ng --depth=1
-        git -C padavan-ng checkout "${{ env.PADAVAN_COMMIT }}"
+        # Подтянуть переменные в текущий shell
+        . variables
+        # Если PADAVAN_THEMES — массив, склеиваем его в строку через пробел
+        if declare -p PADAVAN_THEMES &>/dev/null && [[ "$(declare -p PADAVAN_THEMES)" == declare\ -a* ]]; then
+          PADAVAN_THEMES="${PADAVAN_THEMES[*]}"
+          echo "PADAVAN_THEMES=${PADAVAN_THEMES}" >> "$GITHUB_ENV"
+        fi
+        # Остальные PADAVAN_* как раньше — по строкам из файла
+        grep -hE '^\s*PADAVAN_[A-Z0-9_]+=' variables | grep -v '^PADAVAN_THEMES=' >> "$GITHUB_ENV"
 
-        ARCH=""
-        case "${{ env.PADAVAN_TOOLCHAIN_URL }}" in
-            *.tzst|*.tar.zst) ARCH="--zstd" ;;
-            *.txz|*.tar.xz) ARCH="--xz" ;;
-        esac
-        wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
+        - name: Download sources and toolchain
+          run: |
+            git config --global --add safe.directory '*'
+            git clone -b "${{ env.PADAVAN_BRANCH }}" "${{ env.PADAVAN_REPO }}" padavan-ng --depth=1
+            git -C padavan-ng checkout "${{ env.PADAVAN_COMMIT }}"
+    
+            ARCH=""
+            case "${{ env.PADAVAN_TOOLCHAIN_URL }}" in
+                *.tzst|*.tar.zst) ARCH="--zstd" ;;
+                *.txz|*.tar.xz) ARCH="--xz" ;;
+            esac
+            wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
 
     - name: Install themes
       run: |
-       if [[ -n $PADAVAN_THEMES ]]; then
-         git clone --depth 1 -b "$PADAVAN_THEMES_BRANCH" "$PADAVAN_THEMES_REPO" themes
-         cp -r themes/common-theme themes/jquery.js padavan-ng/trunk/user/www/n56u_ribbon_fixed
+        if [[ -n $PADAVAN_THEMES ]]; then
+          git clone --depth 1 -b "$PADAVAN_THEMES_BRANCH" "$PADAVAN_THEMES_REPO" themes
+          cp -r themes/common-theme themes/jquery.js padavan-ng/trunk/user/www/n56u_ribbon_fixed
 
-         for theme in $PADAVAN_THEMES; do
-           echo "Installing $theme theme"
-           cp -r "themes/$theme-theme" padavan-ng/trunk/user/www/n56u_ribbon_fixed
-         done
-       fi
+          for theme in $PADAVAN_THEMES; do
+            echo "Installing $theme theme"
+            cp -r "themes/$theme-theme" padavan-ng/trunk/user/www/n56u_ribbon_fixed
+          done
+        fi
           
     - name: Run custom pre-build script
       run: '[[ -f pre-build.sh ]] && . pre-build.sh || :'
