@@ -38,7 +38,11 @@ jobs:
       run: |
         sed -i 's|\r$||g' variables
         grep -hE '^\s*PADAVAN_[A-Z0-9_]+=' variables >> "$GITHUB_ENV"
-
+                PADAVAN_THEMES="${PADAVAN_THEMES[*]}"
+        for v in "${!PADAVAN_@}"; do
+          echo "$v=${!v}" >> "$GITHUB_ENV"
+        done
+        
     - name: Download sources and toolchain
       run: |
         git config --global --add safe.directory '*'
