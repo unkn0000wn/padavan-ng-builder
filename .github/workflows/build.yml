@@ -34,8 +34,7 @@ jobs:
         export LANG="en_US.UTF-8"
         export LC_ALL="en_US.UTF-8"
 
-    - name: Get variables 1
-      shell: bash
+    - name: Get variables
       run: |
         sed -i 's|\r$||g' variables
         # Подтянуть переменные в текущий shell
@@ -48,18 +47,17 @@ jobs:
         # Остальные PADAVAN_* как раньше — по строкам из файла
         grep -hE '^\s*PADAVAN_[A-Z0-9_]+=' variables | grep -v '^PADAVAN_THEMES=' >> "$GITHUB_ENV"
 
-        - name: Download sources and toolchain
-          run: |
-            git config --global --add safe.directory '*'
-            git clone -b "${{ env.PADAVAN_BRANCH }}" "${{ env.PADAVAN_REPO }}" padavan-ng --depth=1
-            git -C padavan-ng checkout "${{ env.PADAVAN_COMMIT }}"
-    
-            ARCH=""
-            case "${{ env.PADAVAN_TOOLCHAIN_URL }}" in
-                *.tzst|*.tar.zst) ARCH="--zstd" ;;
-                *.txz|*.tar.xz) ARCH="--xz" ;;
-            esac
-            wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
+    - name: Download sources and toolchain
+      run: |
+        git config --global --add safe.directory '*'
+        git clone -b "${{ env.PADAVAN_BRANCH }}" "${{ env.PADAVAN_REPO }}" padavan-ng --depth=1
+        git -C padavan-ng checkout "${{ env.PADAVAN_COMMIT }}"
+             ARCH=""
+        case "${{ env.PADAVAN_TOOLCHAIN_URL }}" in
+            *.tzst|*.tar.zst) ARCH="--zstd" ;;
+            *.txz|*.tar.xz) ARCH="--xz" ;;
+        esac
+         wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
 
     - name: Install themes
       run: |
