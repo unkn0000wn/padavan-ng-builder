@@ -52,12 +52,13 @@ jobs:
         git config --global --add safe.directory '*'
         git clone -b "${{ env.PADAVAN_BRANCH }}" "${{ env.PADAVAN_REPO }}" padavan-ng --depth=1
         git -C padavan-ng checkout "${{ env.PADAVAN_COMMIT }}"
-             ARCH=""
+        
+        ARCH=""
         case "${{ env.PADAVAN_TOOLCHAIN_URL }}" in
             *.tzst|*.tar.zst) ARCH="--zstd" ;;
             *.txz|*.tar.xz) ARCH="--xz" ;;
         esac
-         wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
+        wget -qO- "${{ env.PADAVAN_TOOLCHAIN_URL }}" | tar -C padavan-ng $ARCH -xf - || :
 
     - name: Install themes
       run: |
