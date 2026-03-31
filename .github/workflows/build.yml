@@ -181,6 +181,6 @@ jobs:
       - name: Upload artifact ${{ matrix.file }}
         uses: actions/upload-artifact@v6
         with:
-          name: ${{ matrix.file }}
-          path: release/${{ matrix.file }}_${{ env.BUILD_TIMESTAMP }}
+          name: ${{ matrix.file }}_${{ env.BUILD_TIMESTAMP }}
+          path: release/${{ matrix.file }}
           retention-days: 7
