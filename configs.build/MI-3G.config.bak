@@ -62,9 +62,6 @@ CONFIG_FIRMWARE_ENABLE_FUSE=y
 ### Enable swap files/partitions support. ~0.05MB
 CONFIG_FIRMWARE_ENABLE_SWAP=y
 
-### Enable dnsmasq regex feathure.
-#CONFIG_FIRMWARE_ENABLE_DNSMASQ_REGEX=y
-
 ### Enable hardware crypto support (if available). ~0.05MB
 #CONFIG_FIRMWARE_ENABLE_CRYPTO_HW=y
 
@@ -96,7 +93,7 @@ CONFIG_FIRMWARE_INCLUDE_XFRM=y
 #CONFIG_FIRMWARE_INCLUDE_IFB=y
 
 ### Include TPROXY module. ~0.005MB
-#CONFIG_FIRMWARE_INCLUDE_TPROXY=y
+CONFIG_FIRMWARE_INCLUDE_TPROXY=y
 
 ### Include IPSet utility and kernel modules. ~0.4MB
 CONFIG_FIRMWARE_INCLUDE_IPSET=y
