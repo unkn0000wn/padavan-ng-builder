@@ -84,7 +84,7 @@ jobs:
 
     - name: Build firmware
       run: |
-        set +e
+        set -xe
         for cfg in $(ls configs.build/*.config); do
             cp -f "$cfg" padavan-ng/trunk/.config
             echo "::group::Build $(basename "$cfg" .config)"
