@@ -138,7 +138,7 @@ jobs:
         fi
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: all_firmware_releases
         retention-days: 7
@@ -152,7 +152,7 @@ jobs:
       files: ${{ steps.collect.outputs.files }}
     steps:
       - name: Download releases
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: all_firmware_releases
           path: release
@@ -173,13 +173,13 @@ jobs:
 
     steps:
       - name: Download releases
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: all_firmware_releases
           path: release
 
       - name: Upload artifact ${{ matrix.file }}
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.file }}_${{ env.BUILD_TIMESTAMP }}
           path: release/${{ matrix.file }}
