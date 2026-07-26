@@ -11,8 +11,8 @@ ZAPRET_REPLACE_NFQWS=1
 ZAPRET_REPLACE_NFQWS2=1
 
 PADAVAN_THEMES=(
-#  blue
-#  blue2
+  blue
+  blue2
   grey
   grey2
 #  white
